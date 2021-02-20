@@ -38,6 +38,12 @@ let data = {
   'Sachiko': '07-000-0000-0000',
   'Ichiro': '6-000-0000-0000',
 }
+let data2 = {
+  'Taro': ['taro@yamada', '09-000-0000-0000', 'Tokyo'],
+  'Hanako': ['hanako@flower', '08-000-0000-0000', 'Yokohama'],
+  'Sachiko': ['sachi@happy', '07-000-0000-0000', 'Nagoya'],
+  'Ichiro': ['ichi@baseball', '06-000-0000-0000', 'USA'],
+}
 
 /* indexアクセス時処理 */
 function response_index(request, response) {
@@ -45,7 +51,8 @@ function response_index(request, response) {
   const content = ejs.render(index_page, {
     title: 'Indexページ',
     content: msg,
-    data: data
+    data: data,
+    filename: 'data_item'
   });
   response.writeHead(200, { 'Content-Type': 'text/html'});
   response.write(content);
@@ -55,39 +62,13 @@ function response_index(request, response) {
 /* otherアクセス時処理 */
 function response_other(request, response) {
   let msg = 'これはOtherページです。';
-  
-  //POSTアクセス時の処理
-  if (request.method == 'POST') {
-    let body = '';
-
-    // データ受信のイベント処理
-    request.on('data', (data) => {
-      body += data;
-    });
-
-    // データ受信終了のイベント処理
-    request.on('end', () => {
-      let post_data = qs.parse(body);
-      console.log(post_data);
-      msg += 'あなたは,｢' + post_data.msg + '｣と書きました';
-      let content = ejs.render(other_page, {
-        title: 'Other',
-        content: msg,
-      });
-      response.writeHead(200, { 'Content-Type': 'text/html'});
-      response.write(content);
-      response.end();
-    });
-  // GETアクセス時の処理
-  } else {
-    let msg = 'ページがありません';
-
-    let content = ejs.render(other_page, {
-      title: 'Other',
-      content: msg,
-    });
-    response.writeHead(200, { 'Content-Type': 'text/html'});
-    response.write(content);
-    response.end();
-  }
+  let content = ejs.render(other_page, {
+    title: 'otherページ',
+    content: msg,
+    data: data2,
+    filename: 'data_item'
+  });
+  response.writeHead(200, {'Content-Type': 'text/html'});
+  response.write(content);
+  response.end();
 }
